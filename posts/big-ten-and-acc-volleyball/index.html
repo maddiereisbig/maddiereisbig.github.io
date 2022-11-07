@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Maddie Reisbig">
-<meta name="dcterms.date" content="2022-11-04">
+<meta name="dcterms.date" content="2022-11-06">
 
 <title>Maddie’s Blog - Can the Selection Committee Justify More ACC Teams in the Tournament This Year?</title>
 <style>
@@ -167,7 +167,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Can the Selection Committee Justify the Rankings of the ACC Teams Come Tournament Time?</h1>
+      <h1 class="title">Can the Selection Committee Justify More ACC Teams in the Tournament This Year?</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">bigten</div>
                 <div class="quarto-category">acc</div>
@@ -189,7 +189,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">November 4, 2022</p>
+        <p class="date">November 6, 2022</p>
       </div>
     </div>
       
@@ -206,14 +206,202 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<p>This is a post about….</p>
+<p>The Big Ten has been the dominating conference in college volleyball for the past decade. Half of the last ten National Championships have belonged in the Big Ten Conference. Prior to this, Penn State went on a dominant run, winning four straight titles from 2007 to 2010, as well as two more in 2013 and 2014. The Nebraska Cornhuskers have also won their share of titles, taking the championship in 2015 and 2017. Wisconsin recently became the third Big Ten team to win the National Championship, in 2021 after a five set battle with Nebraska.</p>
+<p>Throughout the past decade the Big Ten has been widely known as being the premier volleyball conference, with the Pac-12 being a close second. However, in the past couple of years, there has been more and more talk about an up and coming ACC. This past season, two ACC teams made the Final Four, Pittsburgh and Louisville, along with two Big Ten teams, Nebraska and Wisconsin. There was a lot of hype for the ACC teams going into the weekend, but ultimately, the Big Ten ended up sweeping the semifinals. The Big Ten was and is still better than the ACC in college volleyball, and there were two neutral site matches to prove it.</p>
+<p>I wanted to examine the number of sets played by each conferences’ member schools this season. By doing this, I realized that the Big Ten teams play a much harder conference schedule but still get the job done.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>poll <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"avcapollstats.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggbump)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggbeeswarm)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggrepel)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>rankings <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"avcapollstats.csv"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>vbdata <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"ncaa_womens_volleyball_matchstats_2022.csv"</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>players <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"ncaa_womens_volleyball_playerstats_2022.csv"</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>longrankings <span class="ot">&lt;-</span> rankings <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">Conference =</span> Conferemce) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="st">`</span><span class="at">10/31/22</span><span class="st">`</span> <span class="sc">&lt;=</span> <span class="dv">15</span>) <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="at">cols=</span><span class="fu">c</span>(<span class="sc">-</span><span class="st">"Team"</span>, <span class="sc">-</span><span class="st">"Conference"</span>), <span class="at">names_to=</span><span class="st">"Date"</span>, <span class="at">values_to=</span><span class="st">"Rank"</span>) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Date =</span> <span class="fu">mdy</span>(Date)) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Rank <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>lower <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(<span class="st">"2022-07-25"</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>upper <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(<span class="st">"2022-11-20"</span>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>activeplayers <span class="ot">&lt;-</span> players <span class="sc">%&gt;%</span> </span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    s <span class="sc">&gt;</span> <span class="dv">50</span> <span class="sc">&amp;</span> </span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>      <span class="fu">is.na</span>(pos) <span class="sc">==</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(team <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Wisconsin Badgers"</span>, <span class="st">"Ohio St. Buckeyes"</span>, <span class="st">"Nebraska Cornhuskers"</span>, <span class="st">"Pittsburgh Panthers"</span>, <span class="st">"Louisville Cardinals"</span>, <span class="st">"Georgia Tech Yellow Jackets"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(team) <span class="sc">%&gt;%</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">digsperset =</span> digs<span class="sc">/</span>s)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>gt <span class="ot">&lt;-</span> activeplayers <span class="sc">%&gt;%</span> </span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(full_name <span class="sc">==</span> <span class="st">"Paola Pimentel"</span>)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>lv <span class="ot">&lt;-</span> activeplayers <span class="sc">%&gt;%</span> </span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(full_name <span class="sc">==</span> <span class="st">"Elena Scott"</span>)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>nu <span class="ot">&lt;-</span> activeplayers <span class="sc">%&gt;%</span> </span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(full_name <span class="sc">==</span> <span class="st">"Lexi Rodriguez"</span>)</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>os <span class="ot">&lt;-</span> activeplayers <span class="sc">%&gt;%</span> </span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(full_name <span class="sc">==</span> <span class="st">"Kylie Murr"</span>)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>pt <span class="ot">&lt;-</span> activeplayers <span class="sc">%&gt;%</span> </span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(full_name <span class="sc">==</span> <span class="st">"Ashley Browske"</span>)</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>wi <span class="ot">&lt;-</span> activeplayers <span class="sc">%&gt;%</span> </span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(full_name <span class="sc">==</span> <span class="st">"Gulce Guctekin"</span>)</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>bigdata <span class="ot">&lt;-</span> vbdata <span class="sc">%&gt;%</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(team <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Nebraska Cornhuskers"</span>, <span class="st">"Iowa Hawkeyes"</span>, <span class="st">"Penn St. Nittany Lions"</span>, <span class="st">"Minnesota Golden Gophers"</span>, <span class="st">"Michigan Wolverines"</span>, <span class="st">"Michigan St. Spartans"</span>,<span class="st">"Northwestern Wildcats"</span>, <span class="st">"Purdue Boilermakers"</span>, <span class="st">"Indiana Hoosiers"</span>, <span class="st">"Maryland Terrapins, Terps"</span>, <span class="st">"Rutgers Scarlet Knights"</span>, <span class="st">"Wisconsin Badgers"</span>, <span class="st">"Ohio St. Buckeyes"</span>, <span class="st">"Illinois Fighting Illini"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(team) <span class="sc">%&gt;%</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">totalsets =</span> <span class="fu">sum</span>(s)</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>  ) </span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>accdata <span class="ot">&lt;-</span> vbdata <span class="sc">%&gt;%</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(team <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Boston College Eagles"</span>, <span class="st">"Clemson Tigers"</span>, <span class="st">"Duke Blue Devils"</span>, <span class="st">"Florida St. Seminoles"</span>, <span class="st">"Georgia Tech Yellow Jackets"</span>, <span class="st">"Louisville Cardinals"</span>, <span class="st">"Miami (FL) Hurricanes"</span>, <span class="st">"North Carolina Tar Heels"</span>, <span class="st">"NC State Wolfpack"</span>, <span class="st">"Notre Dame Fighting Irish"</span>, <span class="st">"Pittsburgh Panthers"</span>, <span class="st">"Syracuse Orange"</span>, <span class="st">"Virginia Cavaliers"</span>, <span class="st">"Virginia Tech Hokies"</span>, <span class="st">"Wake Forest Demon Deacons"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(team) <span class="sc">%&gt;%</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">totalsets =</span> <span class="fu">sum</span>(s)</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>everyone <span class="ot">&lt;-</span> bigdata <span class="ot">&lt;-</span> vbdata <span class="sc">%&gt;%</span></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(team <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Nebraska Cornhuskers"</span>, <span class="st">"Iowa Hawkeyes"</span>, <span class="st">"Penn St. Nittany Lions"</span>, <span class="st">"Minnesota Golden Gophers"</span>, <span class="st">"Michigan Wolverines"</span>, <span class="st">"Michigan St. Spartans"</span>,<span class="st">"Northwestern Wildcats"</span>, <span class="st">"Purdue Boilermakers"</span>, <span class="st">"Indiana Hoosiers"</span>, <span class="st">"Maryland Terrapins, Terps"</span>, <span class="st">"Rutgers Scarlet Knights"</span>, <span class="st">"Wisconsin Badgers"</span>, <span class="st">"Ohio St. Buckeyes"</span>, <span class="st">"Illinois Fighting Illini"</span>, <span class="st">"Boston College Eagles"</span>, <span class="st">"Clemson Tigers"</span>, <span class="st">"Duke Blue Devils"</span>, <span class="st">"Florida St. Seminoles"</span>, <span class="st">"Georgia Tech Yellow Jackets"</span>, <span class="st">"Louisville Cardinals"</span>, <span class="st">"Miami (FL) Hurricanes"</span>, <span class="st">"North Carolina Tar Heels"</span>, <span class="st">"NC State Wolfpack"</span>, <span class="st">"Notre Dame Fighting Irish"</span>, <span class="st">"Pittsburgh Panthers"</span>, <span class="st">"Syracuse Orange"</span>, <span class="st">"Virginia Cavaliers"</span>, <span class="st">"Virginia Tech Hokies"</span>, <span class="st">"Wake Forest Demon Deacons"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(team) <span class="sc">%&gt;%</span></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>    <span class="at">totalsets =</span> <span class="fu">sum</span>(s)</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">data=</span>everyone, <span class="fu">aes</span>(<span class="at">x=</span><span class="fu">reorder</span>(team, <span class="sc">-</span>totalsets), <span class="at">weight=</span>totalsets), <span class="at">fill=</span><span class="st">"light grey"</span>) <span class="sc">+</span></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">data=</span>bigdata, <span class="fu">aes</span>(<span class="at">x=</span><span class="fu">reorder</span>(team, <span class="sc">-</span>totalsets), <span class="at">weight=</span>totalsets), <span class="at">fill=</span><span class="st">"blue"</span>) <span class="sc">+</span></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">data=</span>accdata, <span class="fu">aes</span>(team, <span class="at">weight=</span>totalsets), <span class="at">fill=</span><span class="st">"dark grey"</span>) <span class="sc">+</span></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(</span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>  <span class="at">x=</span><span class="st">""</span>,</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>    <span class="at">y=</span><span class="st">"Sets Played"</span>, </span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>    <span class="at">title=</span><span class="st">"Does the number of sets played indicate the parity in a conference?"</span>, </span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle=</span><span class="st">"Big Ten teams almost all played more sets than ACC teams, indicating more close matches in the conference."</span>,</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption=</span><span class="st">"Source: NCAA | By Maddie Reisbig"</span></span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">15</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>     <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">10</span>),</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title.position =</span> <span class="st">"plot"</span>,</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">8</span>),</span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">8</span>),</span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>    ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid" width="672"></p>
 </div>
+</div>
+<p>From here, we can see that two of the top Big Ten teams play the least amount of sets out of all Big Ten and ACC teams. Compared to their conter- parts Louisville and Pitt, who rank much lower. This shows that the top Big Ten teams are better at getting the job done than the top ACC teams. Not only are they getting the job done better, but they are doing it against mcuh tougher competition. 7 of the 10 teams that played the most sets are ACC teams. This shows that the bottom of the Big Ten is much stronger than the ACC. Even the lower ranked Big Ten teams are battling with the top Big Ten teams. Take Iowa for example. The Hawkeyes are on the brink of a Big Ten win after taking both Purdue and Penn State to five, yet the are tied for last place in the Big Ten currently.</p>
+<p>One thing that I believe hinders the visibility of Big Ten Dominance is rankings and tournament seedings.</p>
+<p>Every year, it seems as if the top Big Ten teams are all placed in the same regional or placed in the toughest regional, while there are other regionals that are not as difficult. But, what makes one team more deserving of a ranking than another, and how do you factor in strength of schedule. Big Ten teams are playing top teams day in and day out. What about San Diego though? Currently the #2 team in the nation. The Torreros had a successful preseason, defeating both Pittsburgh and Ohio State, but since pre season play, they have only faced two ranked teams.</p>
+<p>What would a regional look like at San Diego? Would San Diego be ready to face a Nebraska, a Wisconsin, or an Ohio State? I am going to say no. Not after these teams have spent a season in the Big Ten. Take a look at how San Diego has risen so quickly in the rankings over the course of the season. No other team has done this, yet the Torreros most likely will not drop in the rankings (unless there is an upset in the WCC).</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bump</span>(<span class="at">data=</span>longrankings, <span class="fu">aes</span>(<span class="at">x=</span>Date, <span class="at">y=</span>Rank, <span class="at">color=</span>Team)) <span class="sc">+</span> </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data=</span>longrankings, <span class="fu">aes</span>(<span class="at">x=</span>Date, <span class="at">y=</span>Rank, <span class="at">color=</span>Team), <span class="at">size =</span> <span class="dv">4</span>)  <span class="sc">+</span> </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data =</span> longrankings <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Date <span class="sc">==</span> <span class="fu">min</span>(Date)), <span class="fu">aes</span>(<span class="at">x =</span> Date <span class="sc">-</span> <span class="dv">6</span>, <span class="at">y=</span>Rank, <span class="at">label =</span> Team), <span class="at">size =</span> <span class="dv">3</span>, <span class="at">hjust =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data =</span> longrankings <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Date <span class="sc">==</span> <span class="fu">max</span>(Date)), <span class="fu">aes</span>(<span class="at">x =</span> Date <span class="sc">+</span> <span class="dv">6</span>, <span class="at">y=</span>Rank, <span class="at">label =</span> Team), <span class="at">size =</span> <span class="dv">3</span>, <span class="at">hjust =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_x_date</span>(<span class="at">limits=</span><span class="fu">c</span>(lower, upper)) <span class="sc">+</span> </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_y_reverse</span>(<span class="at">breaks=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">7</span>,<span class="dv">8</span>,<span class="dv">9</span>,<span class="dv">10</span>,<span class="dv">11</span>,<span class="dv">12</span>,<span class="dv">13</span>,<span class="dv">14</span>,<span class="dv">15</span>,<span class="dv">16</span>,<span class="dv">17</span>,<span class="dv">18</span>,<span class="dv">19</span>,<span class="dv">20</span>,<span class="dv">21</span>,<span class="dv">22</span>,<span class="dv">23</span>,<span class="dv">24</span>,<span class="dv">25</span>)) <span class="sc">+</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#154734"</span>,<span class="st">"#005CA9"</span>, <span class="st">"#FA4616"</span>, <span class="st">"#B3A369"</span>, <span class="st">"#AD0000"</span>, <span class="st">"#7A0019"</span>,<span class="st">"#E41C38"</span>, <span class="st">"#BB0000"</span>, <span class="st">"#041E42"</span>, <span class="st">"#003594"</span>, <span class="st">"#CEB888"</span>, <span class="st">"#84BCE8"</span>, <span class="st">"#8C1515"</span>, <span class="st">"#BF5700"</span>, <span class="st">"#C5050C"</span>)) <span class="sc">+</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"San Diego had a few big wins in preseason play but haven't been put to the test since."</span>, <span class="at">subtitle=</span><span class="st">"Will the selection committe be able to justify a second seed and regional host with this resume?"</span>, <span class="at">y=</span> <span class="st">"Rank"</span>, <span class="at">x=</span> <span class="st">"Week"</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="at">caption=</span><span class="st">"Source: AVCA | By Maddie Reisbig"</span>) <span class="sc">+</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.major =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>     <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>     <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">8</span>),</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title.position =</span> <span class="st">"plot"</span>,</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">8</span>),</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">8</span>),</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Let me pose a question to you. Assuming San Diego wins out, do they deserve a regional host over a Big Ten team who has a few more losses, only because of the tough conference they are in? We will leave that to the committee, but it will sure be interesting to follow as the bracket is revealed concluding regular season play.</p>
+<p>The last thing I want to look at is digs. It makes sense that a game with longer rallies will have more digs, correct? Yes, of course! So, where do the libero’s of the top 3 ACC and the top 3 Big Ten teams rank in digs per set?</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_beeswarm</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">data=</span>activeplayers, </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">groupOnX=</span><span class="cn">TRUE</span>, </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x=</span>team, <span class="at">y=</span>digsperset), <span class="at">color=</span><span class="st">"light grey"</span>) <span class="sc">+</span> </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_beeswarm</span>(</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">data=</span>gt, </span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">groupOnX=</span><span class="cn">TRUE</span>, </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x=</span>team, <span class="at">y=</span>digsperset), <span class="at">color=</span><span class="st">"yellow"</span>) <span class="sc">+</span> </span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_beeswarm</span>(</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">data=</span>lv, </span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">groupOnX=</span><span class="cn">TRUE</span>, </span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x=</span>team, <span class="at">y=</span>digsperset), <span class="at">color=</span><span class="st">"red"</span>) <span class="sc">+</span> </span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_beeswarm</span>(</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">data=</span>nu, </span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">groupOnX=</span><span class="cn">TRUE</span>, </span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x=</span>team, <span class="at">y=</span>digsperset), <span class="at">color=</span><span class="st">"black"</span>) <span class="sc">+</span> </span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_beeswarm</span>(</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">data=</span>os, </span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">groupOnX=</span><span class="cn">TRUE</span>, </span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x=</span>team, <span class="at">y=</span>digsperset), <span class="at">color=</span><span class="st">"dark grey"</span>) <span class="sc">+</span> </span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_beeswarm</span>(</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">data=</span>pt, </span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">groupOnX=</span><span class="cn">TRUE</span>, </span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x=</span>team, <span class="at">y=</span>digsperset), <span class="at">color=</span><span class="st">"blue"</span>) <span class="sc">+</span> </span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_beeswarm</span>(</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">data=</span>wi, </span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">groupOnX=</span><span class="cn">TRUE</span>, </span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x=</span>team, <span class="at">y=</span>digsperset), <span class="at">color=</span><span class="st">"green"</span>) <span class="sc">+</span> </span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">data=</span>gt, </span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x=</span>team, <span class="at">y=</span>digsperset, <span class="at">label=</span>full_name)) <span class="sc">+</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">data=</span>lv, </span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x=</span>team, <span class="at">y=</span>digsperset, <span class="at">label=</span>full_name)) <span class="sc">+</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">data=</span>nu, </span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x=</span>team, <span class="at">y=</span>digsperset, <span class="at">label=</span>full_name)) <span class="sc">+</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">data=</span>os, </span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x=</span>team, <span class="at">y=</span>digsperset, <span class="at">label=</span>full_name)) <span class="sc">+</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">data=</span>pt, </span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x=</span>team, <span class="at">y=</span>digsperset, <span class="at">label=</span>full_name)) <span class="sc">+</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">data=</span>wi, </span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x=</span>team, <span class="at">y=</span>digsperset, <span class="at">label=</span>full_name)) <span class="sc">+</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>  <span class="at">x=</span><span class="st">"Team"</span>,</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">y=</span><span class="st">"digsperset"</span>, </span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">title=</span><span class="st">"The Big Ten averages more digs per set, indicating longer rallies."</span>, </span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle=</span><span class="st">"The top liberos in the Big Ten are still averaging more digsperset despite the tougher competition."</span>,</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption=</span><span class="st">"Source: NCAA | By Maddie Reisbig"</span></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">15</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>     <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">10</span>),</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title.position =</span> <span class="st">"plot"</span>,</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">8</span>),</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">8</span>),</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>    ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Nebraska libero, Lexi Rodriguez stands at the top of the list in digsperset, followed closely by Kylie Murr of Ohio State, Elena Scott of Louisville and Gulce Guctekin of Wisconsin. Other than Louisville, it is obvious that the Big Ten has more digs per set, indicating longer rallies than the ACC.</p>
+<p>I could go into many more examples on why the Big Ten is still the dominant conference in college volleyball despite the hype around the ACC. These charts give some insight into why the Big Ten is still the best, but come tournament time, we will see how well the legendary Big Ten teams stack up against the ACC teams.</p>
 
 
 
